@@ -28,9 +28,9 @@ import { Button } from "@/components/ui/button";
 import Loader from "../loader";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import InfoBar from "../info-bar";
-import { useDispatch } from "react-redux";
-import { WORKSPACES } from "@/redux/slices/workspaces";
-import PaymentButton from "../payment-button";
+// import { useDispatch } from 'react-redux'
+// import { WORKSPACES } from '@/redux/slices/workspaces'
+// import PaymentButton from '../payment-button'
 type Props = {
   activeWorkspaceId: string;
 };
@@ -38,6 +38,7 @@ type Props = {
 const Sidebar = ({ activeWorkspaceId }: Props) => {
   const router = useRouter();
   const pathName = usePathname();
+  // const dispatch = useDispatch()
 
   const { data, isFetched } = useQueryData(["user-workspaces"], getWorkSpaces);
   const menuItems = MENU_ITEMS(activeWorkspaceId);
@@ -53,12 +54,15 @@ const Sidebar = ({ activeWorkspaceId }: Props) => {
   const onChangeActiveWorkspace = (value: string) => {
     router.push(`/dashboard/${value}`);
   };
-
   const currentWorkspace = workspace.workspace.find(
     (s) => s.id === activeWorkspaceId
   );
 
-  return (
+  // if (isFetched && workspace) {
+  //   dispatch(WORKSPACES({ workspaces: workspace.workspace }))
+  // }
+
+  const SidebarSection = (
     <div className="bg-[#111111] flex-none relative p-4 h-full w-[250px] flex flex-col gap-4 items-center overflow-hidden">
       <div className="bg-[#111111] p-4 flex gap-2 justify-center items-center mb-4 absolute top-0 left-0 right-0 ">
         <Image src="/opal-logo.svg" height={40} width={40} alt="logo" />
@@ -135,7 +139,6 @@ const Sidebar = ({ activeWorkspaceId }: Props) => {
           ))}
         </ul>
       </nav>
-
       <Separator className="w-4/5" />
       <p className="w-full text-[#9D9D9D] font-bold mt-4 ">Workspaces</p>
 
@@ -186,15 +189,34 @@ const Sidebar = ({ activeWorkspaceId }: Props) => {
             ))}
         </ul>
       </nav>
-
       <Separator className="w-4/5" />
-      {workspace.subscription?.plan === "FREE" && (
-        <GlobalCard
-          title="Upgrade to Pro"
-          description=" Unlock AI features like transcription, AI summary, and more."
-          footer={<PaymentButton />}
-        />
-      )}
+      {/* // {workspace.subscription?.plan === 'FREE' && (
+        // <GlobalCard
+        //   title="Upgrade to Pro"
+        //   description=" Unlock AI features like transcription, AI summary, and more."
+        //   footer={<PaymentButton />}
+        // />
+      // )} */}
+    </div>
+  );
+  return (
+    <div className="full">
+      <InfoBar />
+      <div className="md:hidden fixed my-4">
+        <Sheet>
+          <SheetTrigger asChild className="ml-2">
+            <Button variant={"ghost"} className="mt-[2px]">
+              <Menu />
+            </Button>
+          </SheetTrigger>
+          <SheetContent side={"left"} className="p-0 w-fit h-full">
+            {SidebarSection}
+          </SheetContent>
+        </Sheet>
+      </div>
+      <div className="md:block hidden h-full">{SidebarSection}</div>
     </div>
   );
 };
+
+export default Sidebar;
